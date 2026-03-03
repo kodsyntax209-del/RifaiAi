@@ -71,44 +71,6 @@
     animation: pulse 2s infinite;
   }
 
-  .header-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .api-key-input {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
-    width: 280px;
-    outline: none;
-    transition: border-color 0.3s;
-  }
-
-  .api-key-input:focus { border-color: var(--accent); }
-  .api-key-input::placeholder { color: var(--muted); }
-
-  .save-btn {
-    background: var(--accent);
-    color: var(--bg);
-    border: none;
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-
-  .save-btn:hover { box-shadow: 0 0 20px rgba(0,240,255,0.4); }
-
   .chat-area {
     flex: 1;
     overflow-y: auto;
@@ -299,7 +261,6 @@
     padding: 0.8rem 1.2rem;
     font-size: 0.85rem;
     z-index: 999;
-    animation: slideIn 0.3s ease;
     display: none;
   }
 
@@ -321,13 +282,7 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateX(20px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-
   @media (max-width: 600px) {
-    .api-key-input { width: 160px; }
     .chat-area { padding: 1rem; }
     .input-area { padding: 1rem; }
     header { padding: 0.8rem 1rem; }
@@ -344,10 +299,6 @@
       <div class="status-dot"></div>
       Çevrimiçi
     </div>
-  </div>
-  <div class="header-right">
-    <input class="api-key-input" id="api-key" type="password" placeholder="Groq API Key gir (gsk_...)">
-    <button class="save-btn" onclick="saveKey()">Kaydet</button>
   </div>
 </header>
 
@@ -376,22 +327,9 @@
 </div>
 
 <script>
-  let apiKey = localStorage.getItem('groq_api_key') || '';
+  const apiKey = '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';
   let messages = [];
   let isLoading = false;
-
-  if (apiKey) document.getElementById('api-key').value = apiKey;
-
-  function saveKey() {
-    const key = document.getElementById('api-key').value.trim();
-    if (!key.startsWith('gsk_')) {
-      showToast('❌ Geçersiz key! "gsk_" ile başlamalı', 'error');
-      return;
-    }
-    apiKey = key;
-    localStorage.setItem('groq_api_key', key);
-    showToast('✅ API Key kaydedildi!', 'success');
-  }
 
   function showToast(msg, type) {
     const t = document.getElementById('toast');
@@ -455,11 +393,6 @@
     const text = input.value.trim();
     if (!text) return;
 
-    if (!apiKey) {
-      showToast('❌ Önce API Key gir ve kaydet!', 'error');
-      return;
-    }
-
     input.value = '';
     input.style.height = 'auto';
     isLoading = true;
@@ -477,7 +410,7 @@
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'llama3-70b-8192',
+          model: 'llama-3.3-70b-versatile',
           messages: [
             {
               role: 'system',
@@ -501,7 +434,7 @@
 
     } catch (err) {
       removeTyping();
-      addMessage('ai', '❌ Hata: ' + (err.message || 'Bir şeyler ters gitti. API key\'ini kontrol et.'));
+      addMessage('ai', '❌ Hata: ' + (err.message || 'Bir şeyler ters gitti.'));
     }
 
     isLoading = false;
@@ -527,5 +460,4 @@
   });
 </script>
 </body>
-
 </html>
